@@ -64,10 +64,8 @@ def dsa_gera_dados_ficticios(num_registros = 600):
         # Gera uma quantidade de produtos vendida entre 1 e 7
         quantidade = np.random.randint(1,8)
 
- ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Não entendi a sintaxe
         # Calcula a data do pedido a partir da data inicial
         data_pedido = data_inicial + timedelta(days = int(i/5), hours = random.randint(0,23)) 
- ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         # Se o produto for Mouse ou Teclado, aplica desconto aleatório de até 10%
         if produto_nome in ['Mouse Vertical', 'Teclado Mecânico']:
@@ -94,15 +92,15 @@ def dsa_gera_dados_ficticios(num_registros = 600):
     # Retorna os dados no formato de DataFrame
     return pd.DataFrame(dados_vendas)
 
- ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Porque na definição da função inicializamos com 600 e aqui na chamada sobrescrevemos?
+ 
 ## 2. GERAR, CARREGAR E EXPLORAR OS DADOS
 df_vendas = dsa_gera_dados_ficticios(500)
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 # Shape
 df_vendas.shape
 
 # Exibe as 5 primeiras linhas do DataFrame
-df_vendas.head
+df_vendas.head()
 
 # Exibe as 5 últimas linhas do DataFrame
 df_vendas.tail()
@@ -117,15 +115,11 @@ df_vendas.describe()
 df_vendas.dtypes
 
 ## 3. LIMPEZA, PRÉ-PROCESSAMENTO E ENGENHARIA DE ATRIBUTOS
- ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Realmente necessário?
-# Se a coluna 'Data_pedido' não estiver com tipo datetime, precisamos fazer a conversão explícita
-# A coluna pode ser usada para análise temporal
+# Força a conversão da coluna para o tipo datetime64 do Pandas
 df_vendas['Data_Pedido'] = pd.to_datetime(df_vendas['Data_Pedido'])
- ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-
 # Engenharia de atributos
 # Criando a coluna 'Faturamento' (preço x quantidade)
-df_vendas['Data_Pedido'] = df_vendas['Preco_Unitario'] * df_vendas['Quantidade']
+df_vendas['Faturamento'] = df_vendas['Preco_Unitario'] * df_vendas['Quantidade']
 
 # Engenharia de atributos
 # Usando uma função lambda para criar uma coluna de status de entrega
@@ -173,10 +167,8 @@ df_vendas.head()
 # Agrupa por mês e soma o faturamento
 faturamento_mensal = df_vendas.groupby('Mes')['Faturamento'].sum()
 
- ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Não entendi a sintaxe
 # Converte o índice para string para facilitar a plotagem no gráfico
 faturamento_mensal.index = faturamento_mensal.index.strftime('%Y-%m')
- ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 
 # Formata para duas casas decimais
 faturamento_mensal.map('R$ {:,.2f}'.format)
@@ -209,12 +201,11 @@ plt.tight_layout()
 plt.show()
 
 ## 6. ANÁLISE 3 - VENDAS POR ESTADO
-
 # Agrupa por estado e soma o faturamento
-vendas_estado = df_vendas.groupby('Estado')['Faturamento'].sum().sor_values(ascending = False)
+vendas_estado = df_vendas.groupby('Estado')['Faturamento'].sum().sort_values(ascending = False)
 
 # Formata para duas casas decimais
-vendas_estado.map('R$ {:,2.f}.format')
+vendas_estado.map('R$ {:,.2f}'.format)
 
 # Cria uma nova figura com tamanho de 12 por 7 polegadas
 plt.figure(figsize = (12, 7))
@@ -230,7 +221,7 @@ plt.title('Faturamento Por Estado', fontsize = 16)
 plt.xlabel('Estado', fontsize = 12)
 
 # Define o rótulo do eixo Y
-plt.ylabel('Faturamento (R$)', fontisze = 12)
+plt.ylabel('Faturamento (R$)', fontsize = 12)
 
 # Mantém os rótulos do eixo X na horizontal (sem rotação)
 plt.xticks(rotation = 0)
@@ -247,7 +238,7 @@ plt.show()
 faturamento_categoria = df_vendas.groupby('Categoria')['Faturamento'].sum().sort_values(ascending = False)
 
 # Deixa a visualização do número mais clara
-faturamento_categoria.map('R$ {:,.2f}.format')
+faturamento_categoria.map('R$ {:,.2f}'.format)
 
 # Importa a função FuncFormatter para formatar os eixos
 from matplotlib.ticker import FuncFormatter
@@ -285,4 +276,4 @@ plt.xticks(rotation = 45, ha = 'right')
 plt.tight_layout()
 
 # Exibe o gráfico
-plt.show
+plt.show()
